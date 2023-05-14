@@ -206,7 +206,8 @@ async def _wardial_async(hosts, max_connections=500, timeout=10, schema='http'):
         # Modify the code to use the `asyncio.gather` function to enable concurrency.
         results = []
         for host in hosts:
-            results.append(await is_server_at_host(session,host))
+            results.append(is_server_at_host(session,host))
+        results = await asyncio.gather(*results)
         return results
 
 
@@ -227,7 +228,16 @@ def wardial(hosts, **kwargs):
     # and use this event loop to call the `_wardial_async` function.
     # Ensure that all of the kwargs parameters get passed to `_wardial_async`.
     # You will have to do some post-processing of the results of this function to convert the output.
-    return []
+    # no async in front of this function so we can call it directly and everything works. The other one requires ~special~ calling. 
+    # This guy will look similar to the first lines in the function above!
+    ans = []
+    loop = asyncio.new_event_loop()
+    xs = loop.run_until_complete(_wardial_async(hosts, **kwargs))
+    for a in range(len(hosts)):
+        if xs[a]:
+            ans.append(hosts[a])
+    loop.close()
+    return ans
 
 if __name__=='__main__':
 
