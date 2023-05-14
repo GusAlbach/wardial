@@ -230,6 +230,7 @@ def wardial(hosts, **kwargs):
     # You will have to do some post-processing of the results of this function to convert the output.
     # no async in front of this function so we can call it directly and everything works. The other one requires ~special~ calling. 
     # This guy will look similar to the first lines in the function above!
+    # comment for workflows to run
     ans = []
     loop = asyncio.new_event_loop()
     xs = loop.run_until_complete(_wardial_async(hosts, **kwargs))
